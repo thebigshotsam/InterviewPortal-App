@@ -16,7 +16,7 @@ const fetchInterview = async(setInterview) => {
   const newArr = arr.map(item=>{ return {...item,date:new Date(item.time)}})
   console.log(newArr)
   setInterview(newArr)
-    
+  return  
 }
 const fetchUsers = async(setUsers) => {
     const arr = []
@@ -31,6 +31,7 @@ const fetchUsers = async(setUsers) => {
   });
   console.log(arr)
   setUsers(arr)
+  return
 }
 const confirmInterview = async (title,time,selectedTime,users) => {
     const newReference = await database().ref('/interviews').push();
@@ -53,15 +54,15 @@ const confirmInterview = async (title,time,selectedTime,users) => {
         }
     });
     const res = await UpdateUserInterview(newReference.key,time,users)
-    var serverToken = "ad3a4291-1502-4ae4-a9a9-196a7a03a73f";
-    var client = new postmark.ServerClient(serverToken);
+    // var serverToken = "ad3a4291-1502-4ae4-a9a9-196a7a03a73f";
+    // var client = new postmark.ServerClient(serverToken);
 
-    await client.sendEmail({
-        "From": "saksham.007official@gmail.com",
-        "To": "sakshamtiwari.thebigshotsam@gmail.com",
-        "Subject": "Test",
-        "TextBody": "Hello from Postmark!"
-    })
+    // await client.sendEmail({
+    //     "From": "imt_2018088@iiitm.ac.in",
+    //     "To": "sakshamtiwari.thebigshotsam@gmail.com",
+    //     "Subject": "Test",
+    //     "TextBody": "Hello from Postmark!"
+    // })
     
     return
 }
@@ -74,6 +75,7 @@ const UpdateInterview = async (title,selectedDate,selectedTime,users,interview) 
         time:selectedDate,
         });
     const res2 = await UpdateUserInterview(interview.id,selectedDate,users)
+    return
     
 }
 const UpdateUserInterview = async (interviewKey,time,users) => {
@@ -111,4 +113,10 @@ const UpdateUserInterview = async (interviewKey,time,users) => {
     
     return
 }
-export {fetchInterview,fetchUsers,confirmInterview,UpdateInterview}
+const removeInterview = async (interview,users) => {
+    await database().ref('/interviews/'+interview.id).remove();
+    await database().ref('/users/'+users[0].id+"/interviews/"+interview.id).remove();
+    await database().ref('/users/'+users[1].id+"/interviews/"+interview.id).remove();
+    return
+}
+export {fetchInterview,fetchUsers,confirmInterview,UpdateInterview,removeInterview}

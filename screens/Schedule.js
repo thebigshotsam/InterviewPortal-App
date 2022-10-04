@@ -38,6 +38,9 @@ const Schedule = (props) => {
         return 0
     }
 
+
+    
+
     const SchedulePress = async() => {
         if (!selectedTime || !selectedDate || !title){
             ToastAndroid.show(`Please enter interview ${!selectedDate?'Date':!selectedTime?'Time':!title?'Title':null}`,

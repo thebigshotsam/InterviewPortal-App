@@ -5,7 +5,7 @@ import { Item } from 'react-native-paper/lib/typescript/components/List/List';
 import { SCREEN_CONSTANT } from '../utils/constants';
 
 const {width,height} = SCREEN_CONSTANT.dimensions;
-function Upcoming( {Edit,item, navigation}) {
+function Upcoming( {Remove,Edit,item, navigation}) {
     
 
   return (
@@ -22,8 +22,8 @@ function Upcoming( {Edit,item, navigation}) {
       }>
         <View style={{flexDirection:'row',alignItems:'flex-start'}}>
             <View style={{
-                    width: width * 0.15,
-                    height: width * 0.15,
+                    width: width * 0.1,
+                    height: width * 0.1,
                 }}>
                 <Image
                 source={require('../assets/user.png')}
@@ -116,7 +116,7 @@ function Upcoming( {Edit,item, navigation}) {
             justifyContent:'space-between'}}>
             
             <Pressable
-            onPress={()=>{}}
+            onPress={Remove}
             style={{
                 borderRadius:5,
                 backgroundColor:'#F5F5F5',

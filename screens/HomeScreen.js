@@ -113,7 +113,7 @@ function HomeScreen({ navigation }) {
             <ActivityIndicator color={'#D83842'} />
           </View>
         </Modal>
-        :state === 'Upcoming'?<State1 users={users} interview={interview} navigation={navigation}/>:<State2 users={users} navigation={navigation}/>}
+        :state === 'Upcoming'?<State1 users={users} setInterview={setInterview} interview={interview} navigation={navigation}/>:<State2 users={users} navigation={navigation}/>}
         
 
     </View>

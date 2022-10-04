@@ -3,14 +3,18 @@
 /* eslint-disable react/self-closing-comp */
 /* eslint-disable prettier/prettier */
 import React, { useState } from 'react';
-import { FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { ActivityIndicator, FlatList, Pressable, StyleSheet, Text, View } from 'react-native';
+import { removeInterview } from '../API/api';
 import Upcoming from '../components/upcoming';
+import Modal from 'react-native-modal';
 
 import { SCREEN_CONSTANT } from '../utils/constants';
 const {width,height} = SCREEN_CONSTANT.dimensions
 
 
-function State1({ navigation,interview,users }) {
+function State1({ setInterview,navigation,interview,users }) {
+
+  const [loading,setLoading] = useState(false)
     
   const Edit = (interviewItem) => {
     
@@ -22,17 +26,39 @@ function State1({ navigation,interview,users }) {
     });
     return
   }
+  const Remove = async (interviewItem) => {
+    setLoading(true)
+    await removeInterview(interviewItem,users)
+    const arr = interview.filter(item => interviewItem.id !== item.id)
+    setInterview(arr);
+    setLoading(false)
+  }
   return (
     <View style={{height:'68%',paddingBottom:'4%'}}     
     >
-        <FlatList 
+        <FlatList
           data={interview} 
           numColumns={1}
           contentContainerStyle={{alignItems:'center'}}
           style={{marginTop:'2%',width:width,paddingBottom:'5%'}} 
-          renderItem={({item})=><Upcoming Edit={()=>Edit(item)} item={item}/>}/>        
+          renderItem={({item})=><Upcoming Remove={()=>Remove(item)} Edit={()=>Edit(item)} item={item}/>}/>        
         
-
+        {loading?
+        <Modal isVisible={loading}>
+          <View style={{
+            backgroundColor:'white',
+            elevation:5,
+            shadowColor:'black',
+            shadowOffset:{height:5,width:5},
+            shadowOpacity:5,
+            borderRadius:6,
+            marginBottom:'5%',
+            alignSelf:'center',
+            width: SCREEN_CONSTANT.dimensions.width * 0.7,padding:'3.5%'
+          }}>
+                <ActivityIndicator color={'#D83842'} />
+              </View>
+        </Modal>:null}
     </View>
   );
 }
