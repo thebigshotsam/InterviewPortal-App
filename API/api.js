@@ -1,9 +1,9 @@
 /* eslint-disable prettier/prettier */
 import database from '@react-native-firebase/database';
-var postmark = require("postmark");
+import storage from '@react-native-firebase/storage';
 
 const fetchInterview = async(setInterview) => {
-    const arr = []
+    try{const arr = []
     await database()
   .ref('/interviews')
   .once('value')
@@ -14,12 +14,15 @@ const fetchInterview = async(setInterview) => {
     
   });
   const newArr = arr.map(item=>{ return {...item,date:new Date(item.time)}})
-  console.log(newArr)
-  setInterview(newArr)
+  console.log(newArr)  
+  setInterview(newArr)}
+  catch(err){
+    throw err
+  }
   return  
 }
 const fetchUsers = async(setUsers) => {
-    const arr = []
+    try{const arr = []
     await database()
   .ref('/users')
   .once('value')
@@ -31,10 +34,14 @@ const fetchUsers = async(setUsers) => {
   });
   console.log(arr)
   setUsers(arr)
+    }catch(err){
+        throw err
+    }
   return
 }
 const confirmInterview = async (title,time,selectedTime,users) => {
-    const newReference = await database().ref('/interviews').push();
+    try{
+        const newReference = await database().ref('/interviews').push();
     console.log('Auto generated key: ', newReference.key);
     await newReference
     .set({
@@ -54,6 +61,9 @@ const confirmInterview = async (title,time,selectedTime,users) => {
         }
     });
     const res = await UpdateUserInterview(newReference.key,time,users)
+    }catch(err){
+        throw err
+    }
     // var serverToken = "ad3a4291-1502-4ae4-a9a9-196a7a03a73f";
     // var client = new postmark.ServerClient(serverToken);
 
@@ -66,15 +76,34 @@ const confirmInterview = async (title,time,selectedTime,users) => {
     
     return
 }
+const UploadDoc = async (users,usersDoc) => {
+    try{
+        var reference = storage().ref('/resumes/'+users[0].id+"/"+usersDoc[0].name);
+        var pathToFile = `${usersDoc[0].fileCopyUri}`;
+        
+        await reference.putFile(pathToFile);
+        reference = storage().ref('/resumes/'+users[1].id+"/"+usersDoc[1].name);
+        pathToFile = `${usersDoc[1].fileCopyUri}`;
+        await reference.putFile(pathToFile);
+    }
+    catch(err){
+        throw err
+    }
+}
 const UpdateInterview = async (title,selectedDate,selectedTime,users,interview) => {
-    const res = await database()
-    .ref('/interviews/'+interview.id)
-    .update({
-        title:title,
-        selectedTime:selectedTime,
-        time:selectedDate,
-        });
-    const res2 = await UpdateUserInterview(interview.id,selectedDate,users)
+    try{
+        const res = await database()
+        .ref('/interviews/'+interview.id)
+        .update({
+            title:title,
+            selectedTime:selectedTime,
+            time:selectedDate,
+            });
+        const res2 = await UpdateUserInterview(interview.id,selectedDate,users)
+    }catch(err){
+        throw err
+    }
+    
     return
     
 }
@@ -119,4 +148,4 @@ const removeInterview = async (interview,users) => {
     await database().ref('/users/'+users[1].id+"/interviews/"+interview.id).remove();
     return
 }
-export {fetchInterview,fetchUsers,confirmInterview,UpdateInterview,removeInterview}
+export {fetchInterview,fetchUsers,confirmInterview,UpdateInterview,removeInterview, UploadDoc}

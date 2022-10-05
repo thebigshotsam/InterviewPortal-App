@@ -6,8 +6,9 @@ import TextInput from "../components/TextInput";
 import Time from "../components/time";
 import { SCREEN_CONSTANT } from "../utils/constants";
 import CalendarStrip from 'react-native-calendar-strip';
-import { confirmInterview, UpdateInterview } from "../API/api";
+import { confirmInterview, UpdateInterview, UploadDoc } from "../API/api";
 import Modal from "react-native-modal";
+import DocumentPicker from 'react-native-document-picker';
 
 const {width,height} = SCREEN_CONSTANT.dimensions
 
@@ -18,6 +19,8 @@ const Schedule = (props) => {
     const [selectedTime,setSelectedTime] = useState(interview?interview.selectedTime:"");
     const [selectedDate,setSelectedDate] = useState(interview?interview.time:"");
     const [loading,setLoading] = useState(false)
+    const [usersDoc, setUsersDoc] = useState([])
+     
 
     const checkAvailability = (user) => {
         console.log(user.interviews)
@@ -67,6 +70,9 @@ const Schedule = (props) => {
         if (mode === "edit"){
             setLoading(true)
             await UpdateInterview(title,selectedDate,selectedTime,users,interview)
+            if (usersDoc){
+                await UploadDoc(users,usersDoc)
+            }            
             ToastAndroid.show('Interview Scheduled',
             ToastAndroid.LONG);
             props.navigation.navigate('My Interview')
@@ -74,6 +80,9 @@ const Schedule = (props) => {
         }else{
             setLoading(true)
             await confirmInterview(title,selectedDate,selectedTime,users)
+            if (usersDoc){
+                await UploadDoc(users,usersDoc)
+            }
             ToastAndroid.show('Interview Scheduled',
             ToastAndroid.LONG);
             props.navigation.navigate('My Interview')
@@ -81,6 +90,24 @@ const Schedule = (props) => {
         }
     }
 
+    const UploadDocument = async () => {
+        try {
+            const res = await DocumentPicker.pick({
+              type: [DocumentPicker.types.allFiles],  mode : 'import', copyTo: 'documentDirectory',            
+            });
+            console.log('res : ' + JSON.stringify(res));
+            const arr = [...usersDoc,res[0]]
+            setUsersDoc(arr);
+          } catch (err) {
+            setUsersDoc([]);
+            if (DocumentPicker.isCancel(err)) {
+              alert('Canceled');
+            } else {
+              alert('Unknown Error: ' + JSON.stringify(err));
+              throw err;
+            }
+          }
+    }
     return <ScrollView style={{width:width,height:height}}>
         <View style= {
         {
@@ -98,9 +125,9 @@ const Schedule = (props) => {
             alignSelf:'center',
             width: width * 0.95,padding:'3.5%'}
       }>
-        <Candidate item={users[0]} />
+        <Candidate uploadResume={()=>UploadDocument()} resume={usersDoc[0]} item={users[0]} />
         <Text style={{color:'#D83842', fontWeight:'bold',fontSize:20}}>{'<>'}</Text>
-        <Candidate item={users[1]} />
+        <Candidate uploadResume={()=>UploadDocument()} resume={usersDoc.length === 2?usersDoc[1]:null}  item={users[1]} />
 
         </View>
         <View style={{

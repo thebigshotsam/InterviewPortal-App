@@ -2,9 +2,12 @@
 import React, { memo, useMemo } from 'react';
 import { Image, Text, View, Pressable, StyleSheet, ToastAndroid } from 'react-native';
 import { SCREEN_CONSTANT } from '../utils/constants';
+import UploadResumeBtn from './uploadResume';
 
 const {width,height} = SCREEN_CONSTANT.dimensions;
-const Candidate = ( props ) => {    
+const Candidate = ( props ) => {   
+    
+    
     
   return (
     
@@ -40,6 +43,14 @@ const Candidate = ( props ) => {
                     {props.item.profile}
                 </Text>        
             </View>
+            
+            {!props.resume?<UploadResumeBtn uploadResume={props.uploadResume} />:
+            <Text style={{
+                color:'#2E2E2E',
+                fontSize:13          
+                }}>
+                {props.resume.name}
+            </Text>}
       </View>
       
   );
