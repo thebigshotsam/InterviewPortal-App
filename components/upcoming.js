@@ -78,7 +78,7 @@ function Upcoming( {Remove,Edit,item, navigation}) {
                     fontWeight:'bold',
                     marginLeft:width*0.04          
                     }}>
-                    {item.date.toISOString().substring(0,10).replace('-','/')}
+                    {item.date.toISOString().substring(0,10).replaceAll('-','/')}
                 </Text>
 
             </View>
@@ -122,7 +122,11 @@ function Upcoming( {Remove,Edit,item, navigation}) {
                 backgroundColor:'#F5F5F5',
                 justifyContent:'center',
                 alignItems:'center',
-                width:'45%',
+                elevation:2,
+                shadowColor:'black',
+                shadowOffset:{height:5,width:5},
+                shadowOpacity:5,
+                width:'40%',
                 height:height*0.06
                 }}>
                 <Text style={{
@@ -140,7 +144,7 @@ function Upcoming( {Remove,Edit,item, navigation}) {
                 backgroundColor:'#D83842',
                 justifyContent:'center',
                 alignItems:'center',
-                width:'45%',
+                width:'40%',
                 height:height*0.06
                 }}>
                 <Text style={{
